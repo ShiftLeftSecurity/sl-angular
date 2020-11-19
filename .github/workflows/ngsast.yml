@@ -22,14 +22,9 @@ jobs:
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
-    - name: Prepare angular app
-      run: |
-        npm install
-        # Use tsc instead of ng build to retain individual files
-        ./node_modules/.bin/tsc --build tsconfig.json
     - name: NextGen Static Analysis
       run: |
-        ${GITHUB_WORKSPACE}/sl analyze --wait --additional-findings="js.nodejs.rules,secrets,insights" --app sl-angular --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --js --cpg dist/out-tsc -- --no-ts
+        ${GITHUB_WORKSPACE}/sl analyze --wait --additional-findings="js.nodejs.rules,secrets,insights" --app sl-angular --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --js --cpg .
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
