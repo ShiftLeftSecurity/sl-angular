@@ -24,11 +24,11 @@ jobs:
       id: extract_branch
     - name: NextGen Static Analysis
       run: |
-        ${GITHUB_WORKSPACE}/sl analyze --wait --additional-findings="js.nodejs.rules,secrets,insights" --app sl-angular --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --js --cpg .
+        ${GITHUB_WORKSPACE}/sl analyze --wait --app sl-angular --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --js --cpg .
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: NextGen-Static-Analysis
     steps:
     - uses: actions/checkout@v2
@@ -39,4 +39,3 @@ jobs:
       run: ${GITHUB_WORKSPACE}/sl check-analysis --app sl-angular --branch "${{ github.head_ref || steps.extract_branch.outputs.branch }}" --report --github-pr-number=${{github.event.number}} --github-pr-user=${{ github.repository_owner }} --github-pr-repo=${{ github.event.repository.name }}  --github-token=${{ secrets.GITHUB_TOKEN }}
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-
